@@ -44,11 +44,11 @@
     "help.emerg.t":"Emergencies","help.emerg.d":"Rapid response to crises like the 2026 earthquake.",
 
     "join.eyebrow":"Leave no one behind",
-    "join.h2":"$18 a month makes you part of it",
+    "join.h2":"Your monthly support sustains the community",
     "join.p":"You who were a member of the Jewish Community of Venezuela and now live abroad: it's time to do our part. A steady monthly gift makes a real difference in many families' lives.",
     "join.quote":"\u201cDo not separate yourself from the community\u201d — Hillel, Pirkei Avot 2:4",
-    "join.cta":"Join now",
-    "join.s1":"Minimum monthly gift to be part of it",
+    "join.cta":"Donate now",
+    "join.s1":"A suggested monthly gift to start",
     "join.s2":"Sustains one displaced family for a month",
     "join.s3":"Community families left homeless after the earthquake",
     "join.s4":"Of funds go to social assistance in Venezuela",
@@ -64,7 +64,7 @@
 
     "contact.eyebrow":"We're here to help",
     "contact.h2":"Contact us",
-    "contact.p":"Want to join, give in kind, or coordinate a larger contribution? Email us or call any of our coordinators.",
+    "contact.p":"Want to join, give in kind, or coordinate a larger contribution? Email us and we'll be glad to help.",
 
     "footer.tax":"A program of <span class=\"org-legal\"></span> — a 501(c)(3) organization. EIN <span class=\"ein-num\"></span>. Donations are tax-deductible to the extent allowed by law. <span class=\"org-addr\"></span>",
     "footer.nav":"Navigation","footer.connect":"Connect",
@@ -135,9 +135,11 @@
     "d.donor.first":"First name","d.donor.last":"Last name",
     "d.donor.email":"Email (for your receipt)",
     "d.donor.hint":"We use your email only to send your tax-deductible receipt.",
+    "d.card.lbl":"5 · Card",
+    "d.card.secure":"Secure payment processed by Stripe. Your card details never touch our servers.",
     "d.submit":"Continue to secure payment",
     "d.confirm.t":"Donation preview",
-    "d.confirm.note":"This is a preview. Connect Donorbox or Stripe in assets/js/config.js to enable real payments.",
+    "d.confirm.note":"This is a preview. Connect Stripe in assets/js/config.js to enable real payments.",
     "d.sum.t":"Your donation",
     "d.sum.fund":"Designation","d.sum.freq":"Frequency","d.sum.total":"Total",
     "d.sum.tax.t":"Tax-deductible","d.sum.tax.b":"A program of"
@@ -288,10 +290,10 @@
         var msg = "";
         if (fund === "earthquake" && amt >= 1000) {
           var fams = Math.floor(amt / 1000);
-          msg = L("Sostiene a " + fams + (fams === 1 ? " familia" : " familias") + " damnificada" + (fams === 1 ? "" : "s") + " por un mes.",
+          msg = L("Sostiene a " + fams + (fams === 1 ? " familia" : " familias") + " afectada" + (fams === 1 ? "" : "s") + " por un mes.",
                   "Sustains " + fams + (fams === 1 ? " displaced family" : " displaced families") + " for a month.");
         } else if (fund === "earthquake") {
-          msg = L("Cada dólar va directo a vivienda y comida para familias damnificadas.",
+          msg = L("Cada dólar va directo a vivienda y comida para familias afectadas.",
                   "Every dollar goes straight to housing and food for displaced families.");
         } else if (freq === "monthly" && amt) {
           msg = L("Tu aporte mensual sostiene la asistencia social durante todo el año.",
@@ -321,10 +323,15 @@
     var btn = $("#donateBtn");
     var note = $("#provNote");
     var pay = CFG.payments || { provider: "test" };
+    var sc = pay.stripe || {};
+    var cardOn = pay.provider === "stripe-card" && sc.publishableKey && sc.publishableKey.indexOf("REPLACE") === -1;
 
     function setNote() {
       if (!note) return;
-      if (pay.provider === "test") {
+      if (cardOn) {
+        note.textContent = L("Pago seguro con tarjeta, procesado por Stripe.",
+                             "Secure card payment, processed by Stripe.");
+      } else if (pay.provider === "test" || pay.provider === "stripe-card") {
         note.textContent = L("Modo de prueba — los pagos aún no están conectados.",
                              "Test mode — payments are not connected yet.");
       } else {
@@ -332,6 +339,129 @@
                              "You'll be taken to a secure payment page.");
       }
     }
+
+    function setBtnLabel(txt) { var s = btn && btn.querySelector("span"); if (s) s.textContent = txt; }
+    function refreshSubmitLabel() {
+      setBtnLabel(cardOn ? L("Donar de forma segura", "Donate securely")
+                         : L("Continuar al pago seguro", "Continue to secure payment"));
+    }
+    function setBtnBusy(busy) {
+      if (!btn) return;
+      btn.disabled = busy;
+      btn.style.opacity = busy ? ".7" : "";
+      if (busy) setBtnLabel(L("Procesando…", "Processing…")); else refreshSubmitLabel();
+    }
+
+    function fundLabelOf(fund) { return fund === "earthquake" ? "Earthquake Relief 2026" : "General Fund"; }
+
+    function showPanel(title, bodyTxt, noteTxt) {
+      var panel = $("#confirmPanel");
+      if (!panel) return;
+      var t = $("#confirmTitle"), b = $("#confirmBody"), n = $("#confirmNote");
+      if (t && title) t.textContent = title;
+      if (b) b.textContent = bodyTxt || "";
+      if (n) n.textContent = noteTxt || "";
+      panel.hidden = false;
+      panel.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    /* ---------- Stripe Elements (card on our own page) ---------- */
+    function setupStripeCard() {
+      if (!cardOn) return null;
+      var cardField = $("#cardField"), errEl = $("#cardError");
+      var stripe = null, elements = null, paymentEl = null, mountedMode = null, ready = false;
+
+      function load(cb) {
+        if (window.Stripe) return cb();
+        var s = document.createElement("script");
+        s.src = "https://js.stripe.com/v3/"; s.onload = cb;
+        s.onerror = function () { if (errEl) errEl.textContent = L("No se pudo cargar Stripe.", "Could not load Stripe."); };
+        document.head.appendChild(s);
+      }
+      function centsNow() { var a = getAmount(); return Math.round((a || 0) * 100); }
+      function modeNow() { return selectedRadio("freq") === "monthly" ? "subscription" : "payment"; }
+
+      function build() {
+        if (!stripe) return;
+        var amt = centsNow(); if (amt < 50) amt = 1800; // Stripe minimum; placeholder until a real amount is chosen
+        var mode = modeNow();
+        if (elements && mode === mountedMode) { try { elements.update({ amount: amt }); } catch (e) {} return; }
+        mountedMode = mode;
+        if (paymentEl) { try { paymentEl.unmount(); } catch (e) {} }
+        elements = stripe.elements({
+          mode: mode, amount: amt, currency: "usd",
+          appearance: { theme: "stripe", variables: { colorPrimary: "#16557F", fontFamily: "Inter, system-ui, sans-serif", borderRadius: "10px" } }
+        });
+        paymentEl = elements.create("payment", { layout: "tabs" });
+        paymentEl.mount("#paymentElement");
+      }
+
+      load(function () {
+        try { stripe = Stripe(sc.publishableKey); } catch (e) { if (errEl) errEl.textContent = e.message; return; }
+        if (cardField) cardField.hidden = false;
+        build();
+        ready = true;
+        $$('input[name="amount"],input[name="freq"]').forEach(function (r) { r.addEventListener("change", build); });
+        if (custom) custom.addEventListener("input", build);
+        // returning from a 3-D Secure redirect
+        var qs = new URLSearchParams(location.search);
+        if (qs.get("redirect_status") === "succeeded" || qs.get("status") === "success") {
+          showPanel(L("¡Gracias por tu donativo!", "Thank you for your gift!"),
+                    L("Tu pago se procesó correctamente. Recibirás un recibo deducible de impuestos por correo.",
+                      "Your payment went through. You'll receive a tax-deductible receipt by email."), "");
+        }
+      });
+
+      return {
+        isReady: function () { return ready; },
+        pay: function (d) {
+          if (errEl) errEl.textContent = "";
+          if (!stripe || !elements) { if (errEl) errEl.textContent = L("Espera a que cargue el formulario de pago.", "Please wait for the payment form to load."); return; }
+          if (!sc.createPaymentUrl || sc.createPaymentUrl.indexOf("REPLACE") > -1) {
+            showPanel(L("Falta conectar el cobro", "Payment endpoint not set"),
+              L("El formulario de tarjeta está listo, pero aún falta el endpoint que crea el cobro (stripe.createPaymentUrl en config.js). Sigue STRIPE-SETUP.md.",
+                "The card form is ready, but the endpoint that creates the charge (stripe.createPaymentUrl in config.js) is not set yet. See STRIPE-SETUP.md."), "");
+            return;
+          }
+          setBtnBusy(true);
+          elements.submit().then(function (r) {
+            if (r.error) { if (errEl) errEl.textContent = r.error.message; setBtnBusy(false); return Promise.reject(); }
+            return fetch(sc.createPaymentUrl, {
+              method: "POST", headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                amount: Math.round(d.amount * 100), currency: "usd",
+                frequency: d.freq, fund: d.fund, fundLabel: fundLabelOf(d.fund),
+                email: d.email, name: d.name
+              })
+            });
+          }).then(function (res) {
+            return res.json().then(function (data) {
+              if (!res.ok || !data.clientSecret) throw new Error(data.error || "Server error");
+              return data.clientSecret;
+            });
+          }).then(function (clientSecret) {
+            return stripe.confirmPayment({
+              elements: elements, clientSecret: clientSecret,
+              confirmParams: { return_url: location.origin + location.pathname + "?status=success" },
+              redirect: "if_required"
+            });
+          }).then(function (conf) {
+            if (conf && conf.error) { if (errEl) errEl.textContent = conf.error.message; setBtnBusy(false); return; }
+            setBtnBusy(false);
+            showPanel(L("¡Gracias por tu donativo!", "Thank you for your gift!"),
+              L("Tu pago de " + fmt(d.amount) + (d.freq === "monthly" ? "/mes" : "") + " se procesó correctamente. Recibirás un recibo deducible de impuestos por correo.",
+                "Your gift of " + fmt(d.amount) + (d.freq === "monthly" ? "/mo" : "") + " went through. You'll receive a tax-deductible receipt by email."), "");
+            if (cardField) cardField.hidden = true;
+            btn.style.display = "none";
+          }).catch(function (e) {
+            if (e && e.message && errEl) errEl.textContent = e.message;
+            setBtnBusy(false);
+          });
+        }
+      };
+    }
+
+    var stripeCard = setupStripeCard();
 
     if (btn) btn.addEventListener("click", function () {
       var amt = getAmount();
@@ -341,9 +471,12 @@
       var email = ($("#email") || {}).value || "";
       var name = (($("#firstName") || {}).value || "") + " " + (($("#lastName") || {}).value || "");
       name = name.trim();
+      var fundLabel = fundLabelOf(fund);
 
-      var fundLabel = fund === "earthquake" ? "Earthquake Relief 2026" : "General Fund";
+      // 1) Card on our own page (Stripe Elements)
+      if (stripeCard) { stripeCard.pay({ amount: amt, fund: fund, freq: freq, email: email, name: name }); return; }
 
+      // 2) Donorbox redirect
       if (pay.provider === "donorbox" && pay.donorboxUrl && pay.donorboxUrl.indexOf("REPLACE") === -1) {
         var u = new URL(pay.donorboxUrl);
         u.searchParams.set("amount", String(amt));
@@ -356,7 +489,8 @@
         return;
       }
 
-      if (pay.provider === "stripe") {
+      // 3) Stripe Payment Link redirect
+      if (pay.provider === "stripe-link") {
         var link = ((pay.stripeLinks || {})[fund] || {})[freq] || "";
         if (link) {
           var su = new URL(link);
@@ -367,25 +501,23 @@
         }
       }
 
-      // Fallback / test preview
-      var panel = $("#confirmPanel"), body = $("#confirmBody");
-      if (panel && body) {
-        var freqTxt = freq === "monthly" ? L("mensual", "monthly") : L("una vez", "one-time");
-        body.textContent = L(
-          "Donativo de " + fmt(amt) + " (" + freqTxt + ") a “" + (fund === "earthquake" ? "Terremoto 2026" : "Fondo general") + "”" + (name ? " · " + name : "") + (email ? " · " + email : ""),
-          "Donation of " + fmt(amt) + " (" + freqTxt + ") to “" + (fund === "earthquake" ? "Earthquake Relief 2026" : "General Fund") + "”" + (name ? " · " + name : "") + (email ? " · " + email : "")
-        );
-        panel.hidden = false;
-        panel.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
+      // 4) Fallback / test preview
+      var freqTxt = freq === "monthly" ? L("mensual", "monthly") : L("una vez", "one-time");
+      showPanel(
+        L("Vista previa del donativo", "Donation preview"),
+        L("Donativo de " + fmt(amt) + " (" + freqTxt + ") a “" + (fund === "earthquake" ? "Terremoto 2026" : "Fondo general") + "”" + (name ? " · " + name : "") + (email ? " · " + email : ""),
+          "Donation of " + fmt(amt) + " (" + freqTxt + ") to “" + (fund === "earthquake" ? "Earthquake Relief 2026" : "General Fund") + "”" + (name ? " · " + name : "") + (email ? " · " + email : "")),
+        L("Esto es una vista previa. Conecta Stripe en assets/js/config.js para activar los pagos reales.",
+          "This is a preview. Connect Stripe in assets/js/config.js to enable real payments.")
+      );
     });
 
     setNote();
+    refreshSubmitLabel();
     updateSummary();
 
-    // refresh note language on toggle
-    var _apply = applyLang;
-    window.__fyvOnLang = setNote;
+    // refresh note + label language on toggle
+    window.__fyvOnLang = function () { setNote(); refreshSubmitLabel(); };
   }
 
   /* ---------- Boot ---------- */
