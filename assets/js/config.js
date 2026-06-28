@@ -74,5 +74,17 @@ window.FYV_CONFIG = {
       general:   { once: "", monthly: "" },
       earthquake:{ once: "", monthly: "" }
     }
+  },
+
+  /* ---- Supabase (logs every confirmed donation) ------------------
+     Records each confirmation to a Supabase table from the browser,
+     using the PUBLIC anon key (safe to ship). The table's row-level
+     security must allow INSERT for the "anon" role only — see
+     SUPABASE-SETUP.md for the exact SQL. Leave the REPLACE values to
+     disable logging (the form still works). */
+  supabase: {
+    url:     "https://REPLACE.supabase.co",
+    anonKey: "REPLACE_WITH_ANON_PUBLIC_KEY",
+    table:   "donations"
   }
 };
