@@ -105,6 +105,7 @@ p{margin:0 0 1rem}
 .site-header__bar{display:flex;align-items:center;gap:1.2rem;height:74px}
 .brand{display:flex;align-items:center;gap:.7rem;text-decoration:none;margin-right:auto}
 .brand__emblem{width:42px;height:42px;flex:none}
+.brand__logo{height:44px;width:auto;max-width:210px;flex:none;object-fit:contain;display:block}
 .brand__name{font-family:var(--display);font-weight:700;font-size:1.02rem;line-height:1.05;color:var(--ink)}
 .brand__name small{display:block;font-family:var(--body);font-weight:500;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-55)}
 
@@ -232,6 +233,9 @@ p{margin:0 0 1rem}
 .footer__brand .brand__emblem{width:40px;height:40px}
 .footer__brand b{color:#fff;font-family:var(--display)}
 .footer__tax{font-size:.86rem;line-height:1.6;color:#94A9BA;max-width:42ch}
+.footer__cintillo{margin:0 0 2rem;padding:1.1rem 1.2rem;background:#fff;border-radius:var(--radius);text-align:center}
+.footer__cintillo__label{margin:0 0 .7rem;font-size:.78rem;letter-spacing:.02em;text-transform:uppercase;color:#5A6B79;font-weight:600}
+.footer__cintillo img{display:block;width:100%;max-width:760px;height:auto;margin:0 auto}
 .footer__bottom{border-top:1px solid var(--line-light);padding-top:1.4rem;display:flex;gap:1rem;justify-content:space-between;flex-wrap:wrap;font-size:.82rem;color:#7E94A6}
 
 /* =====================================================================
