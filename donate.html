@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Donar — Friends of Yajad-Venezuela</title>
-<meta name="description" content="Haz tu donativo deducible de impuestos al Fondo General o a la Ayuda de Emergencia por el terremoto de Venezuela 2026. $1,000 sostienen a una familia damnificada por un mes.">
+<meta name="description" content="Haz tu donativo deducible de impuestos al Fondo General o a la Ayuda de Emergencia por el terremoto de Venezuela 2026. $1,000 sostienen a una familia afectada por un mes.">
 <link rel="icon" href="assets/img/emblem.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,7 +64,7 @@
             </label>
             <label class="opt">
               <input type="radio" name="fund" value="earthquake">
-              <span data-i18n="d.fund.quake">Terremoto 2026<small data-i18n="d.fund.quake.s">Vivienda y comida para damnificados</small></span>
+              <span data-i18n="d.fund.quake">Terremoto 2026<small data-i18n="d.fund.quake.s">Vivienda y comida para afectados</small></span>
             </label>
           </div>
         </div>
@@ -74,11 +74,11 @@
           <span class="lbl" data-i18n="d.freq.lbl">2 · Frecuencia</span>
           <div class="segmented">
             <label class="opt">
-              <input type="radio" name="freq" value="monthly" checked>
+              <input type="radio" name="freq" value="monthly">
               <span data-i18n="d.freq.monthly">Mensual<small data-i18n="d.freq.monthly.s">Apoyo continuo y constante</small></span>
             </label>
             <label class="opt">
-              <input type="radio" name="freq" value="once">
+              <input type="radio" name="freq" value="once" checked>
               <span data-i18n="d.freq.once">Una vez<small data-i18n="d.freq.once.s">Un único donativo</small></span>
             </label>
           </div>
@@ -112,16 +112,24 @@
           <p class="hint" data-i18n="d.donor.hint">Usamos tu correo solo para enviarte el recibo deducible de impuestos.</p>
         </div>
 
+        <!-- Card (Stripe Elements) — appears only when card payments are enabled -->
+        <div class="field" id="cardField" hidden>
+          <span class="lbl" data-i18n="d.card.lbl">5 · Tarjeta</span>
+          <div id="paymentElement"></div>
+          <p class="hint" id="cardError" role="alert" style="color:var(--ember);margin:.55rem 0 0"></p>
+          <p class="hint" style="margin-top:.55rem">🔒 <span data-i18n="d.card.secure">Pago seguro procesado por Stripe. Los datos de tu tarjeta nunca pasan por nuestros servidores.</span></p>
+        </div>
+
         <button class="btn btn--lg" id="donateBtn" style="width:100%" type="button">
-          <span data-i18n="d.submit">Continuar al pago seguro</span> →
+          <span>Continuar al pago seguro</span> →
         </button>
         <p class="hint" style="text-align:center;margin-top:.8rem" id="provNote"></p>
 
-        <!-- test-mode confirmation -->
+        <!-- success / test-mode confirmation -->
         <div id="confirmPanel" hidden style="margin-top:1.2rem;border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:12px;padding:1.1rem 1.2rem;background:var(--paper)">
-          <strong data-i18n="d.confirm.t">Vista previa del donativo</strong>
+          <strong id="confirmTitle" data-i18n="d.confirm.t">Vista previa del donativo</strong>
           <p class="hint" id="confirmBody" style="margin:.5rem 0 0"></p>
-          <p class="hint" style="margin:.6rem 0 0" data-i18n="d.confirm.note">Esto es una vista previa. Conecta Donorbox o Stripe en assets/js/config.js para activar los pagos reales.</p>
+          <p class="hint" id="confirmNote" style="margin:.6rem 0 0" data-i18n="d.confirm.note">Esto es una vista previa. Conecta Stripe en assets/js/config.js para activar los pagos reales.</p>
         </div>
       </div>
 
