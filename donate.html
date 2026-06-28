@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Donar — Friends of Yajad-Venezuela</title>
+<meta name="description" content="Haz tu donativo deducible de impuestos al Fondo General o a la Ayuda de Emergencia por el terremoto de Venezuela 2026. $1,000 sostienen a una familia damnificada por un mes.">
+<link rel="icon" href="assets/img/emblem.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Frank+Ruhl+Libre:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<a class="skip" href="#main" data-i18n="skip">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="wrap site-header__bar">
+    <a class="brand" href="index.html" aria-label="Friends of Yajad-Venezuela">
+      <img class="brand__emblem" src="assets/img/emblem.svg" alt="">
+      <span class="brand__name">Friends of Yajad-Venezuela<small data-i18n="brand.sub">Comunidad Judía de Venezuela</small></span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="index.html" data-i18n="nav.home">Inicio</a>
+      <a href="earthquake.html" data-i18n="nav.quake">Terremoto 2026</a>
+      <a href="donate.html" aria-current="page" data-i18n="nav.donate">Donar</a>
+      <a href="index.html#contacto" data-i18n="nav.contact">Contacto</a>
+    </nav>
+    <div class="lang desktop" role="group" aria-label="Idioma / Language">
+      <button data-lang="es" aria-pressed="true">ES</button>
+      <button data-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <button class="menu-toggle" id="menuToggle" aria-label="Menú" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="section section--sand" style="padding-bottom:0">
+  <div class="wrap">
+    <div class="section__head reveal" style="margin-bottom:1.6rem">
+      <span class="eyebrow"><span class="heb">יחד</span> <span data-i18n="d.eyebrow">Tu aporte, mano a mano</span></span>
+      <h2 data-i18n="d.h2">Haz tu donativo</h2>
+      <p data-i18n="d.p">Elige el destino y el monto. Recibirás un recibo deducible de impuestos. El 100% se destina a la asistencia social de la Comunidad Judía de Venezuela.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section section--sand" style="padding-top:1.4rem">
+  <div class="wrap">
+    <div class="donate-shell">
+
+      <!-- FORM -->
+      <div class="dform reveal">
+        <!-- Fund -->
+        <div class="field">
+          <span class="lbl" data-i18n="d.fund.lbl">1 · ¿A dónde va tu donativo?</span>
+          <div class="segmented segmented--ember">
+            <label class="opt">
+              <input type="radio" name="fund" value="general" checked>
+              <span data-i18n="d.fund.general">Fondo general<small data-i18n="d.fund.general.s">Comida, salud, tercera edad, educación</small></span>
+            </label>
+            <label class="opt">
+              <input type="radio" name="fund" value="earthquake">
+              <span data-i18n="d.fund.quake">Terremoto 2026<small data-i18n="d.fund.quake.s">Vivienda y comida para damnificados</small></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Frequency -->
+        <div class="field">
+          <span class="lbl" data-i18n="d.freq.lbl">2 · Frecuencia</span>
+          <div class="segmented">
+            <label class="opt">
+              <input type="radio" name="freq" value="monthly" checked>
+              <span data-i18n="d.freq.monthly">Mensual<small data-i18n="d.freq.monthly.s">Apoyo continuo y constante</small></span>
+            </label>
+            <label class="opt">
+              <input type="radio" name="freq" value="once">
+              <span data-i18n="d.freq.once">Una vez<small data-i18n="d.freq.once.s">Un único donativo</small></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Amount -->
+        <div class="field">
+          <span class="lbl" data-i18n="d.amt.lbl">3 · Monto (USD)</span>
+          <div class="amounts" id="amounts">
+            <label class="amt"><input type="radio" name="amount" value="18" checked><span>$18<small data-i18n="d.amt.18">Ser parte</small></span></label>
+            <label class="amt"><input type="radio" name="amount" value="36"><span>$36<small data-i18n="d.amt.36">Chai doble</small></span></label>
+            <label class="amt"><input type="radio" name="amount" value="100"><span>$100<small>&nbsp;</small></span></label>
+            <label class="amt"><input type="radio" name="amount" value="180"><span>$180<small>&nbsp;</small></span></label>
+            <label class="amt"><input type="radio" name="amount" value="500"><span>$500<small>&nbsp;</small></span></label>
+            <label class="amt"><input type="radio" name="amount" value="1000"><span>$1,000<small data-i18n="d.amt.1000">1 familia / mes</small></span></label>
+          </div>
+          <div class="custom-amt">
+            <span>$</span>
+            <input type="text" id="customAmount" inputmode="decimal" data-i18n-ph="d.amt.custom" placeholder="Otro monto" aria-label="Otro monto">
+          </div>
+        </div>
+
+        <!-- Donor -->
+        <div class="field">
+          <span class="lbl" data-i18n="d.donor.lbl">4 · Tus datos</span>
+          <div class="grid-2">
+            <input type="text" id="firstName" data-i18n-ph="d.donor.first" placeholder="Nombre" aria-label="Nombre">
+            <input type="text" id="lastName" data-i18n-ph="d.donor.last" placeholder="Apellido" aria-label="Apellido">
+          </div>
+          <input type="email" id="email" style="margin-top:.9rem" data-i18n-ph="d.donor.email" placeholder="Correo electrónico (para tu recibo)" aria-label="Correo electrónico">
+          <p class="hint" data-i18n="d.donor.hint">Usamos tu correo solo para enviarte el recibo deducible de impuestos.</p>
+        </div>
+
+        <button class="btn btn--lg" id="donateBtn" style="width:100%" type="button">
+          <span data-i18n="d.submit">Continuar al pago seguro</span> →
+        </button>
+        <p class="hint" style="text-align:center;margin-top:.8rem" id="provNote"></p>
+
+        <!-- test-mode confirmation -->
+        <div id="confirmPanel" hidden style="margin-top:1.2rem;border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:12px;padding:1.1rem 1.2rem;background:var(--paper)">
+          <strong data-i18n="d.confirm.t">Vista previa del donativo</strong>
+          <p class="hint" id="confirmBody" style="margin:.5rem 0 0"></p>
+          <p class="hint" style="margin:.6rem 0 0" data-i18n="d.confirm.note">Esto es una vista previa. Conecta Donorbox o Stripe en assets/js/config.js para activar los pagos reales.</p>
+        </div>
+      </div>
+
+      <!-- SUMMARY -->
+      <aside class="summary">
+        <div class="summary__card reveal">
+          <h3 data-i18n="d.sum.t">Tu donativo</h3>
+          <div class="summary__row"><span data-i18n="d.sum.fund">Destino</span><span id="sumFund">—</span></div>
+          <div class="summary__row"><span data-i18n="d.sum.freq">Frecuencia</span><span id="sumFreq">—</span></div>
+          <div class="summary__total">
+            <span data-i18n="d.sum.total">Total</span>
+            <b id="sumTotal">$18</b>
+          </div>
+          <p class="summary__note" id="sumImpact"></p>
+          <div class="summary__tax">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 5v6c0 5 3.5 8 8 11 4.5-3 8-6 8-11V5l-8-3Z"/><path d="M9 12l2 2 4-4"/></svg>
+            <span>
+              <strong data-i18n="d.sum.tax.t">Deducible de impuestos</strong><br>
+              <span data-i18n="d.sum.tax.b">Programa de</span> <span class="org-legal"></span> · 501(c)(3) · EIN <span class="ein-num"></span>
+            </span>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <div>
+        <div class="footer__brand"><img class="brand__emblem" src="assets/img/emblem.svg" alt=""><b>Friends of Yajad-Venezuela</b></div>
+        <p class="footer__tax" data-i18n="footer.tax">Programa de <span class="org-legal"></span> — organización 501(c)(3). EIN <span class="ein-num"></span>. Los donativos son deducibles de impuestos hasta donde lo permita la ley. <span class="org-addr"></span></p>
+      </div>
+      <div>
+        <h4 data-i18n="footer.nav">Navegación</h4>
+        <ul>
+          <li><a href="index.html" data-i18n="nav.home">Inicio</a></li>
+          <li><a href="earthquake.html" data-i18n="nav.quake">Terremoto 2026</a></li>
+          <li><a href="donate.html" data-i18n="nav.donate">Donar</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-i18n="footer.connect">Conecta</h4>
+        <ul>
+          <li><a class="org-email" href="#"></a></li>
+          <li><a class="org-fb" href="#" target="_blank" rel="noopener">Facebook</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© <span id="year"></span> Friends of Yajad-Venezuela</span>
+      <span data-i18n="footer.tagline">Yajad — agrupa la asistencia social de la Comunidad Judía de Venezuela.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
