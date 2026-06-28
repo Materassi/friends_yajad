@@ -42,15 +42,30 @@ window.FYV_CONFIG = {
        The form forwards amount, recurring, and a "designation" so the
        gift is tagged General Fund vs Earthquake Relief.
 
-     OPTION B — Stripe Payment Links:
-       Set provider:"stripe" and paste a Payment Link per fund/frequency.
-       (Stripe Payment Links can't take an arbitrary amount, so we map
-       to the closest link OR use a single "customer chooses amount" link.)
+     OPTION B — Stripe card form on your own site (Stripe Elements):
+       Set provider:"stripe-card" and paste your Publishable key below.
+       Card data is entered in a Stripe-hosted field and tokenized in the
+       browser — it never touches your servers. To actually CHARGE the
+       card you also need a tiny backend endpoint (a PaymentIntent must be
+       created with your SECRET key, which can never live in the browser).
+       A copy-paste AWS Lambda for this is in STRIPE-SETUP.md. Put its URL
+       in stripe.createPaymentUrl. Until both are set, the form falls back
+       to the preview panel.
 
-     OPTION C — "test": shows a confirmation panel instead of redirecting,
+     OPTION C — Stripe Payment Links (redirect, no card fields on-site):
+       Set provider:"stripe-link" and paste a Payment Link per fund/frequency.
+
+     OPTION D — "test": shows a confirmation panel instead of charging,
        so you can preview the flow before going live.                  */
   payments: {
-    provider: "test",                 // "donorbox" | "stripe" | "test"
+    provider: "stripe-card",          // "stripe-card" | "donorbox" | "stripe-link" | "test"
+
+    /* Stripe Elements — card form on your own page */
+    stripe: {
+      publishableKey:  "pk_live_REPLACE_WITH_YOUR_PUBLISHABLE_KEY",
+      // Backend endpoint that returns { clientSecret }. See STRIPE-SETUP.md.
+      createPaymentUrl: "https://REPLACE-with-your-lambda-url/"
+    },
 
     donorboxUrl: "https://donorbox.org/REPLACE-WITH-YOUR-CAMPAIGN",
 
