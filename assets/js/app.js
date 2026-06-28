@@ -365,6 +365,38 @@
       panel.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
+    /* ---------- Log confirmation to Supabase ---------- */
+    function recordDonation(status, d, ref) {
+      var sb = CFG.supabase || {};
+      if (!sb.url || sb.url.indexOf("REPLACE") > -1 || !sb.anonKey || sb.anonKey.indexOf("REPLACE") > -1) return;
+      d = d || {};
+      var row = {
+        fund:        d.fund || null,
+        fund_label:  d.fund ? fundLabelOf(d.fund) : null,
+        frequency:   d.freq || null,
+        amount:      (d.amount != null ? d.amount : null),
+        currency:    "usd",
+        donor_name:  d.name || null,
+        donor_email: d.email || null,
+        status:      status,
+        provider:    pay.provider,
+        payment_ref: ref || null,
+        lang:        lang
+      };
+      try {
+        fetch(sb.url.replace(/\/+$/, "") + "/rest/v1/" + (sb.table || "donations"), {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": sb.anonKey,
+            "Authorization": "Bearer " + sb.anonKey,
+            "Prefer": "return=minimal"
+          },
+          body: JSON.stringify(row)
+        }).catch(function () {});
+      } catch (e) {}
+    }
+
     /* ---------- Stripe Elements (card on our own page) ---------- */
     function setupStripeCard() {
       if (!cardOn) return null;
@@ -406,6 +438,7 @@
         // returning from a 3-D Secure redirect
         var qs = new URLSearchParams(location.search);
         if (qs.get("redirect_status") === "succeeded" || qs.get("status") === "success") {
+          recordDonation("succeeded", {}, qs.get("payment_intent"));
           showPanel(L("¡Gracias por tu donativo!", "Thank you for your gift!"),
                     L("Tu pago se procesó correctamente. Recibirás un recibo deducible de impuestos por correo.",
                       "Your payment went through. You'll receive a tax-deductible receipt by email."), "");
@@ -448,6 +481,7 @@
           }).then(function (conf) {
             if (conf && conf.error) { if (errEl) errEl.textContent = conf.error.message; setBtnBusy(false); return; }
             setBtnBusy(false);
+            recordDonation("succeeded", d, conf && conf.paymentIntent && conf.paymentIntent.id);
             showPanel(L("¡Gracias por tu donativo!", "Thank you for your gift!"),
               L("Tu pago de " + fmt(d.amount) + (d.freq === "monthly" ? "/mes" : "") + " se procesó correctamente. Recibirás un recibo deducible de impuestos por correo.",
                 "Your gift of " + fmt(d.amount) + (d.freq === "monthly" ? "/mo" : "") + " went through. You'll receive a tax-deductible receipt by email."), "");
@@ -503,6 +537,7 @@
 
       // 4) Fallback / test preview
       var freqTxt = freq === "monthly" ? L("mensual", "monthly") : L("una vez", "one-time");
+      recordDonation("preview", { fund: fund, freq: freq, amount: amt, name: name, email: email }, null);
       showPanel(
         L("Vista previa del donativo", "Donation preview"),
         L("Donativo de " + fmt(amt) + " (" + freqTxt + ") a “" + (fund === "earthquake" ? "Terremoto 2026" : "Fondo general") + "”" + (name ? " · " + name : "") + (email ? " · " + email : ""),
