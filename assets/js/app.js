@@ -81,6 +81,8 @@
     "q.h1":"More than 300 families in our community<br><span class=\"accent\">lost their homes.</span>",
     "q.lede":"Two earthquakes struck Venezuela on June 24, 2026, with the heaviest damage in La Guaira and Caracas. Many Jewish Community families were left without shelter or food. Your help today decides how they sleep tonight.",
     "q.cta1":"Donate for housing & food","q.cta2":"See the situation",
+    "q.gfm.cta":"Donate via GoFundMe ↗",
+    "q.gfm.note":"Prefer GoFundMe? You can also give through the official campaign, organized by the Vaad of Venezuela for the benefit of Friends of Yajad-Venezuela. Opens in a new tab.",
     "q.trust":"501(c)(3) — tax-deductible donations. EIN <span class=\"ein-num\"></span>",
     "q.box1.t":"$1,000 = one family, one month",
     "q.box1.d":"Covers temporary rent, food, and basic needs for one displaced family for a full month.",
@@ -198,6 +200,11 @@
       if (el.tagName === "A") el.setAttribute("href", "mailto:" + (o.email || ""));
     });
     $$(".org-fb").forEach(function (el) { if (o.facebook) el.setAttribute("href", o.facebook); });
+
+    var gfm = (CFG.links || {}).gofundmeEarthquake || "";
+    $$(".gofundme-link").forEach(function (el) {
+      if (gfm) { el.setAttribute("href", gfm); el.setAttribute("target", "_blank"); el.setAttribute("rel", "noopener noreferrer"); }
+    });
 
     var em = $("#emailLink");
     if (em && o.email) em.setAttribute("href", "mailto:" + o.email);
