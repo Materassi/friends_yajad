@@ -145,6 +145,17 @@ p{margin:0 0 1rem}
 .hero__lede{font-size:clamp(1.02rem,1.6vw,1.18rem);color:#C8D6E2;max-width:46ch;margin-bottom:1.8rem}
 .hero__cta{display:flex;gap:.8rem;flex-wrap:wrap}
 .cta-row{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center}
+
+/* GoFundMe goal card */
+.goal-card{background:#fff;border-radius:var(--radius-lg);padding:1.7rem 1.6rem;box-shadow:0 24px 60px rgba(0,0,0,.30);max-width:430px;margin-left:auto}
+.goal-card__tag{display:inline-block;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--ember);background:rgba(192,73,47,.10);padding:.34em .8em;border-radius:999px}
+.goal-card__h{font-family:var(--display);font-size:1.18rem;line-height:1.25;margin:.8rem 0 .35rem;color:var(--ink)}
+.goal-card__org{font-size:.82rem;color:var(--ink-55);margin:0 0 1rem}
+.goal-card__goal{display:flex;flex-direction:column;padding:1rem 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:1.2rem}
+.goal-card__goal-n{font-family:var(--display);font-size:2.1rem;font-weight:700;color:var(--ink);line-height:1}
+.goal-card__goal-l{font-size:.8rem;color:var(--ink-55);margin-top:.3rem}
+.goal-card__note{font-size:.78rem;color:var(--ink-55);text-align:center;margin:.8rem 0 0}
+@media (max-width:900px){.goal-card{margin:0 auto}}
 .hero .eyebrow{color:#FFCD6B}
 .hero .eyebrow .heb{color:#9FD0EE}
 
