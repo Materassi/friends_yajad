@@ -32,6 +32,14 @@ window.FYV_CONFIG = {
   /* ---- The relief video ------------------------------------------ */
   videoId: "kT6v2obhS1E",
 
+  /* ---- External campaigns ---------------------------------------- */
+  /* Official GoFundMe for the earthquake (organized by Vaad Venezuela,
+     beneficiary Friends of Yajad-Venezuela). Shown as a separate option
+     on the earthquake page; opens in a new tab. */
+  links: {
+    gofundmeEarthquake: "https://www.gofundme.com/f/help-the-venezuelan-jewish-community-after-the-earthquake"
+  },
+
   /* ---- Payments --------------------------------------------------
      The donation form builds a checkout URL from the donor's choices.
      Pick ONE provider below and paste your real link. No backend or
