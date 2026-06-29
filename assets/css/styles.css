@@ -144,6 +144,7 @@ p{margin:0 0 1rem}
 .hero h1 .accent{color:var(--gold);font-style:normal}
 .hero__lede{font-size:clamp(1.02rem,1.6vw,1.18rem);color:#C8D6E2;max-width:46ch;margin-bottom:1.8rem}
 .hero__cta{display:flex;gap:.8rem;flex-wrap:wrap}
+.cta-row{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center}
 .hero .eyebrow{color:#FFCD6B}
 .hero .eyebrow .heb{color:#9FD0EE}
 
